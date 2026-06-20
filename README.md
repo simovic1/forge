@@ -65,3 +65,41 @@ momentum/
 ├── docs/
 └── docker-compose.yml
 ```
+
+## Core Domain
+- User
+- DailyLog
+- WeeklyReview
+- MonthlyReview
+
+Daily logs are the source of truth. Weekly and monthly reviews are calculated from daily data and enrighed with user reflection.
+
+## Local Development
+
+Comming soon.
+
+## Roadmap
+
+### Sprint 1
+- Monorepo setup
+- Spring Boot backend
+- PostgreSQL
+- Flyway
+- Docker Compose
+- Health endpoint
+- User entity
+
+### Sprint 2
+- Authentication
+- Daily Log API
+
+### Sprint 3
+- Weekly Review
+- Monthly Review
+
+### Sprint 4
+- Dashboard and charts
+
+## Status
+Early development
+
