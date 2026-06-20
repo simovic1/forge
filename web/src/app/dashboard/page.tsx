@@ -1,5 +1,4 @@
 import WeightChart, { type WeightPoint } from '@/app/components/WeightChart'
-import LogoutButton from '@/app/components/LogoutButton'
 
 // Placeholder data — replace with data from the FORGE backend API once wired up.
 const weightTrend: WeightPoint[] = [
@@ -23,18 +22,12 @@ const stats = [
 export default function DashboardPage() {
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
-      <header className="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-[var(--color-accent)]">
-            FORGE
-          </p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="mt-2 text-[var(--color-muted)]">
-            Behavior-based fitness tracking — built with Next.js, TypeScript,
-            Tailwind CSS, and Recharts.
-          </p>
-        </div>
-        <LogoutButton />
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Home</h1>
+        <p className="mt-2 text-[var(--color-muted)]">
+          Behavior-based fitness tracking — built with Next.js, TypeScript,
+          Tailwind CSS, and Recharts.
+        </p>
       </header>
 
       <section className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
