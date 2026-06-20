@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MonthlyReviewRepository extends JpaRepository<MonthlyReview, Long> {
+interface MonthlyReviewRepository extends JpaRepository<MonthlyReview, Long> {
 
     List<MonthlyReview> findByUserId(Long userId);
 

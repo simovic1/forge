@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,18 @@ public class UserService {
                 .name(name)
                 .build();
         return userRepository.save(user);
+    }
+
+    /**
+     * Returns the user only when the email exists and the password matches.
+     * Empty otherwise — callers decide how to signal failure (the auth layer
+     * maps an empty result to a single, non-enumerating error).
+     */
+    @Transactional(readOnly = true)
+    public Optional<User> findByCredentials(String email, String rawPassword) {
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        return userRepository.findByEmail(normalizedEmail)
+                .filter(user -> passwordEncoder.matches(rawPassword, user.getPasswordHash()));
     }
 
     @Transactional(readOnly = true)

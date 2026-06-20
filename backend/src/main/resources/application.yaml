@@ -2,6 +2,12 @@ spring:
   application:
     name: forge
 
+app:
+  jwt:
+    # Dev default only — override with JWT_SECRET (min 32 bytes for HS256) in real environments.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-please-32b!}
+    access-token-ttl: PT1H
+
 management:
   endpoints:
     web:
