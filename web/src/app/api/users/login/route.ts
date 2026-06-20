@@ -10,7 +10,8 @@ export async function POST(request: Request) {
 
   let res: Response
   try {
-    res = await fetch(`${BACKEND_URL}/api/users/login`, {
+    // The backend serves login from the auth controller at /api/auth/login.
+    res = await fetch(`${BACKEND_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,

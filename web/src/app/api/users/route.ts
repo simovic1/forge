@@ -1,11 +1,33 @@
 import { NextResponse } from 'next/server'
 
-// Registration is not implemented yet. For now this returns 404 so the UI can
-// surface a "registration unavailable" state. Replace with a proxy to the
-// backend (POST /api/users) once the registration flow is ready.
-export async function POST() {
-  return NextResponse.json(
-    { message: 'Registration is not available yet.' },
-    { status: 404 },
-  )
+// Proxies registration to the FORGE backend (POST /api/users) so the browser
+// can call a same-origin endpoint (avoids CORS). The backend persists the user
+// and returns 201 with the created user, or 409 if the email is already used.
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
+
+export async function POST(request: Request) {
+  const body = await request.text()
+
+  let res: Response
+  try {
+    res = await fetch(`${BACKEND_URL}/api/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    })
+  } catch {
+    return NextResponse.json(
+      { message: 'Unable to reach the registration service.' },
+      { status: 502 },
+    )
+  }
+
+  // Pass the backend's status and JSON body straight through.
+  const payload = await res.text()
+  return new NextResponse(payload, {
+    status: res.status,
+    headers: {
+      'Content-Type': res.headers.get('Content-Type') ?? 'application/json',
+    },
+  })
 }
