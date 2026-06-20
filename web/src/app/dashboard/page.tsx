@@ -3,6 +3,8 @@ import WeightChart from '@/app/components/WeightChart'
 import type { DailyLogResponse } from '@/lib/api'
 import { TOKEN_COOKIE } from '@/lib/auth'
 import { computeDashboardStats, computeWeightTrend } from '@/lib/dashboard'
+import { monthsShort } from '@/i18n/messages'
+import { getLocale, getT } from '@/i18n/server'
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
 
@@ -23,27 +25,27 @@ async function fetchLogs(): Promise<DailyLogResponse[]> {
 }
 
 export default async function DashboardPage() {
+  const t = await getT()
+  const locale = await getLocale()
   const logs = await fetchLogs()
   const stats = computeDashboardStats(logs)
-  const weightTrend = computeWeightTrend(logs)
+  const weightTrend = computeWeightTrend(logs, monthsShort[locale])
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="mt-2 text-[var(--color-muted)]">
-        Behavior-based fitness tracking application focused on long-term weight loss, habit building, and self-awareness.
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+        <p className="mt-2 text-[var(--color-muted)]">{t('dashboard.subtitle')}</p>
       </header>
 
       <section className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {stats.map((stat) => (
           <div
-            key={stat.label}
+            key={stat.labelKey}
             className="rounded-xl border border-[var(--color-border)] p-4"
           >
             <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
-              {stat.label}
+              {t(stat.labelKey)}
             </p>
             <div className="mt-1 flex items-baseline justify-between gap-2">
               <span className="text-xl font-semibold">{stat.value}</span>
@@ -58,15 +60,15 @@ export default async function DashboardPage() {
       </section>
 
       <section className="rounded-xl border border-[var(--color-border)] p-6">
-        <h2 className="mb-1 text-lg font-semibold">Weight trend</h2>
+        <h2 className="mb-1 text-lg font-semibold">{t('dashboard.weightTrend')}</h2>
         <p className="mb-4 text-sm text-[var(--color-muted)]">
-          Last 7 logged days
+          {t('dashboard.last7Days')}
         </p>
         {weightTrend.length > 0 ? (
           <WeightChart data={weightTrend} />
         ) : (
           <p className="py-12 text-center text-sm text-[var(--color-muted)]">
-            No weight logged yet.
+            {t('dashboard.noWeight')}
           </p>
         )}
       </section>

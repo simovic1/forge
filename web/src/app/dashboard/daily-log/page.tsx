@@ -11,6 +11,7 @@ import {
   type CreateDailyLogRequest,
   type DailyLogResponse,
 } from '@/lib/api'
+import { useTranslations } from '@/i18n/client'
 
 type FormState = {
   logDate: string
@@ -88,6 +89,7 @@ function presetFrom(log: DailyLogResponse): FormState {
 
 export default function DailyLogPage() {
   const router = useRouter()
+  const t = useTranslations()
   // Default the date to today via a lazy initializer (no effect needed).
   const [form, setForm] = useState<FormState>(() => ({ ...EMPTY, logDate: todayISO() }))
   const [existingId, setExistingId] = useState<number | null>(null)
@@ -165,12 +167,10 @@ export default function DailyLogPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         setError(
-          err.status === 409
-            ? 'A daily log already exists for this date.'
-            : err.message,
+          err.status === 409 ? t('dailyLog.errorDuplicate') : err.message,
         )
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(t('common.errorGeneric'))
       }
       setSubmitting(false)
     }
@@ -180,20 +180,20 @@ export default function DailyLogPage() {
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
       <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
-          {existingId !== null ? 'Edit daily log' : 'New daily log'}
+          {existingId !== null ? t('dailyLog.titleEdit') : t('dailyLog.titleNew')}
         </h1>
         <p className="mt-2 text-[var(--color-muted)]">
           {loading
-            ? 'Loading…'
+            ? t('dailyLog.loading')
             : existingId !== null
-              ? 'A log already exists for this date — edit it below and save.'
-              : 'Only the date is required — fill in whatever you track today.'}
+              ? t('dailyLog.descEdit')
+              : t('dailyLog.descNew')}
         </p>
       </header>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-        <Section title="Date">
-          <Field label="Log date" htmlFor="logDate">
+        <Section title={t('dailyLog.sectionDate')}>
+          <Field label={t('dailyLog.logDate')} htmlFor="logDate">
             <input
               id="logDate"
               type="date"
@@ -206,8 +206,8 @@ export default function DailyLogPage() {
           </Field>
         </Section>
 
-        <Section title="Body">
-          <Field label="Weight (kg)" htmlFor="weight">
+        <Section title={t('dailyLog.sectionBody')}>
+          <Field label={t('dailyLog.weight')} htmlFor="weight">
             <input
               id="weight"
               type="number"
@@ -219,7 +219,7 @@ export default function DailyLogPage() {
               className={inputCls}
             />
           </Field>
-          <Field label="Sleep (hours)" htmlFor="sleepingHours">
+          <Field label={t('dailyLog.sleep')} htmlFor="sleepingHours">
             <input
               id="sleepingHours"
               type="number"
@@ -232,7 +232,7 @@ export default function DailyLogPage() {
               className={inputCls}
             />
           </Field>
-          <Field label="Steps" htmlFor="steps">
+          <Field label={t('dailyLog.steps')} htmlFor="steps">
             <input
               id="steps"
               type="number"
@@ -244,18 +244,18 @@ export default function DailyLogPage() {
               className={inputCls}
             />
           </Field>
-          <Field label="Training" htmlFor="trainingCompleted">
+          <Field label={t('dailyLog.training')} htmlFor="trainingCompleted">
             <Checkbox
               id="trainingCompleted"
               checked={form.trainingCompleted}
               onChange={(v) => set('trainingCompleted', v)}
-              text="Completed training today"
+              text={t('dailyLog.trainingCheck')}
             />
           </Field>
         </Section>
 
-        <Section title="Nutrition">
-          <Field label="Protein (g)" htmlFor="proteinGrams">
+        <Section title={t('dailyLog.sectionNutrition')}>
+          <Field label={t('dailyLog.protein')} htmlFor="proteinGrams">
             <input
               id="proteinGrams"
               type="number"
@@ -267,7 +267,7 @@ export default function DailyLogPage() {
               className={inputCls}
             />
           </Field>
-          <Field label="Calories" htmlFor="calories">
+          <Field label={t('dailyLog.calories')} htmlFor="calories">
             <input
               id="calories"
               type="number"
@@ -279,7 +279,7 @@ export default function DailyLogPage() {
               className={inputCls}
             />
           </Field>
-          <Field label="Water (liters)" htmlFor="waterLiters">
+          <Field label={t('dailyLog.water')} htmlFor="waterLiters">
             <input
               id="waterLiters"
               type="number"
@@ -293,52 +293,52 @@ export default function DailyLogPage() {
           </Field>
         </Section>
 
-        <Section title="Behavior">
-          <Field label="Overeating" htmlFor="overeating">
+        <Section title={t('dailyLog.sectionBehavior')}>
+          <Field label={t('dailyLog.overeating')} htmlFor="overeating">
             <Checkbox
               id="overeating"
               checked={form.overeating}
               onChange={(v) => set('overeating', v)}
-              text="Overate today"
+              text={t('dailyLog.overeatingCheck')}
             />
           </Field>
-          <Field label="Trigger" htmlFor="triggerType">
+          <Field label={t('dailyLog.trigger')} htmlFor="triggerType">
             <input
               id="triggerType"
               type="text"
               maxLength={100}
-              placeholder="e.g. stress, boredom"
+              placeholder={t('dailyLog.triggerPlaceholder')}
               value={form.triggerType}
               onChange={(e) => set('triggerType', e.target.value)}
               className={inputCls}
             />
           </Field>
-          <Field label="Resisted trigger" htmlFor="resistedTrigger">
+          <Field label={t('dailyLog.resistedTrigger')} htmlFor="resistedTrigger">
             <Checkbox
               id="resistedTrigger"
               checked={form.resistedTrigger}
               onChange={(v) => set('resistedTrigger', v)}
-              text="Resisted the trigger"
+              text={t('dailyLog.resistedCheck')}
             />
           </Field>
         </Section>
 
-        <Section title="Wellbeing (1 = low, 5 = high)">
-          <Field label="Energy" htmlFor="energyLevel">
+        <Section title={t('dailyLog.sectionWellbeing')}>
+          <Field label={t('dailyLog.energy')} htmlFor="energyLevel">
             <LevelSelect
               id="energyLevel"
               value={form.energyLevel}
               onChange={(v) => set('energyLevel', v)}
             />
           </Field>
-          <Field label="Stress" htmlFor="stressLevel">
+          <Field label={t('dailyLog.stress')} htmlFor="stressLevel">
             <LevelSelect
               id="stressLevel"
               value={form.stressLevel}
               onChange={(v) => set('stressLevel', v)}
             />
           </Field>
-          <Field label="Mood" htmlFor="moodLevel">
+          <Field label={t('dailyLog.mood')} htmlFor="moodLevel">
             <LevelSelect
               id="moodLevel"
               value={form.moodLevel}
@@ -347,8 +347,8 @@ export default function DailyLogPage() {
           </Field>
         </Section>
 
-        <Section title="Notes" single>
-          <Field label="Notes" htmlFor="notes">
+        <Section title={t('dailyLog.sectionNotes')} single>
+          <Field label={t('dailyLog.notes')} htmlFor="notes">
             <textarea
               id="notes"
               rows={4}
@@ -376,17 +376,17 @@ export default function DailyLogPage() {
           >
             {submitting
               ? existingId !== null
-                ? 'Updating…'
-                : 'Saving…'
+                ? t('dailyLog.updating')
+                : t('dailyLog.saving')
               : existingId !== null
-                ? 'Update daily log'
-                : 'Save daily log'}
+                ? t('dailyLog.update')
+                : t('dailyLog.save')}
           </button>
           <Link
             href="/dashboard"
             className="rounded-lg border border-[var(--color-border)] px-4 py-2.5 text-sm font-medium hover:bg-[var(--color-accent)]/10"
           >
-            Cancel
+            {t('common.cancel')}
           </Link>
         </div>
       </form>

@@ -2,17 +2,21 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from '@/i18n/client'
+import type { MessageKey } from '@/i18n/messages'
 import LogoutButton from './LogoutButton'
+import LanguageSwitcher from './LanguageSwitcher'
 
-const items = [
-  { href: '/dashboard', label: 'Home' },
-  { href: '/dashboard/daily-log', label: 'Daily log' },
-  { href: '/dashboard/weekly-review', label: 'Weekly review' },
-  { href: '/dashboard/monthly-review', label: 'Monthly review' },
+const items: { href: string; labelKey: MessageKey }[] = [
+  { href: '/dashboard', labelKey: 'nav.home' },
+  { href: '/dashboard/daily-log', labelKey: 'nav.dailyLog' },
+  { href: '/dashboard/weekly-review', labelKey: 'nav.weeklyReview' },
+  { href: '/dashboard/monthly-review', labelKey: 'nav.monthlyReview' },
 ]
 
 export default function DashboardNav() {
   const pathname = usePathname()
+  const t = useTranslations()
 
   // Home matches exactly; the others match their section (incl. subroutes).
   const isActive = (href: string) =>
@@ -31,11 +35,12 @@ export default function DashboardNav() {
               : 'text-[var(--color-muted)] hover:bg-[var(--color-accent)]/5 hover:text-[var(--color-foreground)]'
           }`}
         >
-          {item.label}
+          {t(item.labelKey)}
         </Link>
       ))}
-      <div className="mt-4 sm:mt-auto sm:pt-4">
+      <div className="mt-4 flex items-center justify-between gap-2 sm:mt-auto sm:pt-4">
         <LogoutButton />
+        <LanguageSwitcher />
       </div>
     </nav>
   )

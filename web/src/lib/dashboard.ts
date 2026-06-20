@@ -1,7 +1,9 @@
 import type { DailyLogResponse } from '@/lib/api'
 import type { WeightPoint } from '@/app/components/WeightChart'
+import type { MessageKey } from '@/i18n/messages'
 
-export type Stat = { label: string; value: string; sub?: string }
+// `labelKey` is a translation key; the page resolves it to the user's language.
+export type Stat = { labelKey: MessageKey; value: string; sub?: string }
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 
@@ -10,24 +12,22 @@ const signed = (n: number) => `${n > 0 ? '+' : ''}${n.toFixed(1)}`
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
-const MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-]
-
-// "2026-06-20" -> "Jun 20" (parsed by hand to avoid timezone shifts).
-function formatDayLabel(iso: string): string {
+// "2026-06-20" -> "Jun 20" using the supplied (localized) month names.
+function formatDayLabel(iso: string, months: string[]): string {
   const [, month, day] = iso.split('-')
-  return `${MONTHS[Number(month) - 1]} ${Number(day)}`
+  return `${months[Number(month) - 1]} ${Number(day)}`
 }
 
 // The last (up to) 7 logs that recorded a weight, oldest -> newest for the chart.
-export function computeWeightTrend(logs: DailyLogResponse[]): WeightPoint[] {
+export function computeWeightTrend(
+  logs: DailyLogResponse[],
+  months: string[],
+): WeightPoint[] {
   return logs
     .filter((l) => l.weight != null)
     .sort((a, b) => a.logDate.localeCompare(b.logDate))
     .slice(-7)
-    .map((l) => ({ date: formatDayLabel(l.logDate), weight: l.weight as number }))
+    .map((l) => ({ date: formatDayLabel(l.logDate, months), weight: l.weight as number }))
 }
 
 function isoDaysAgo(days: number): string {
@@ -78,20 +78,20 @@ export function computeDashboardStats(logs: DailyLogResponse[]): Stat[] {
 
   return [
     {
-      label: 'Current weight',
+      labelKey: 'stats.currentWeight',
       value: newestWeight != null ? `${newestWeight} kg` : '—',
     },
     {
-      label: '7-day change',
+      labelKey: 'stats.change7d',
       value: changeValue ?? '—',
       sub: changeSub,
     },
     {
-      label: 'Avg. sleep',
+      labelKey: 'stats.avgSleep',
       value: avgSleep != null ? `${avgSleep.toFixed(1)} h` : '—',
     },
     {
-      label: 'Avg. steps',
+      labelKey: 'stats.avgSteps',
       value: avgSteps != null ? avgSteps.toFixed(1) : '—',
     },
   ]

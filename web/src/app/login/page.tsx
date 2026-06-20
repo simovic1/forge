@@ -3,11 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ApiError, login, register } from '@/lib/api'
+import { useTranslations } from '@/i18n/client'
+import LanguageSwitcher from '@/app/components/LanguageSwitcher'
 
 type Mode = 'login' | 'register'
 
 export default function LoginPage() {
   const router = useRouter()
+  const t = useTranslations()
 
   const [mode, setMode] = useState<Mode>('login')
   const [name, setName] = useState('')
@@ -30,19 +33,18 @@ export default function LoginPage() {
         router.refresh()
       } else {
         await register({ email, password, name: name || undefined })
-        // Won't be reached today — registration returns 404 for now.
         setMode('login')
-        setError('Account created. Please log in.')
+        setError(t('login.created'))
       }
     } catch (err) {
       if (err instanceof ApiError) {
         if (mode === 'login' && (err.status === 401 || err.status === 404)) {
-          setError('Invalid email or password. New here? Create an account.')
+          setError(t('login.errorInvalid'))
         } else {
           setError(err.message)
         }
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(t('common.errorGeneric'))
       }
     } finally {
       setSubmitting(false)
@@ -57,12 +59,15 @@ export default function LoginPage() {
   return (
     <main className="flex flex-1 items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm">
+        <div className="mb-4 flex justify-end">
+          <LanguageSwitcher />
+        </div>
         <header className="mb-8 text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-[var(--color-accent)]">
             FORGE
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight">
-            {mode === 'login' ? 'Log in' : 'Create your account'}
+            {mode === 'login' ? t('login.titleLogin') : t('login.titleRegister')}
           </h1>
         </header>
 
@@ -70,7 +75,10 @@ export default function LoginPage() {
           {mode === 'register' && (
             <div className="flex flex-col gap-1.5">
               <label htmlFor="name" className="text-sm font-medium">
-                Name <span className="text-[var(--color-muted)]">(optional)</span>
+                {t('login.name')}{' '}
+                <span className="text-[var(--color-muted)]">
+                  {t('login.nameOptional')}
+                </span>
               </label>
               <input
                 id="name"
@@ -85,7 +93,7 @@ export default function LoginPage() {
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="email" className="text-sm font-medium">
-              Email
+              {t('login.email')}
             </label>
             <input
               id="email"
@@ -100,7 +108,7 @@ export default function LoginPage() {
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="password" className="text-sm font-medium">
-              Password
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -130,35 +138,35 @@ export default function LoginPage() {
           >
             {submitting
               ? mode === 'login'
-                ? 'Logging in…'
-                : 'Creating account…'
+                ? t('login.submittingLogin')
+                : t('login.submittingRegister')
               : mode === 'login'
-                ? 'Log in'
-                : 'Create account'}
+                ? t('login.submitLogin')
+                : t('login.submitRegister')}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
           {mode === 'login' ? (
             <>
-              Don&apos;t have an account?{' '}
+              {t('login.noAccount')}{' '}
               <button
                 type="button"
                 onClick={() => switchMode('register')}
                 className="font-medium text-[var(--color-accent)] hover:underline"
               >
-                Register
+                {t('login.register')}
               </button>
             </>
           ) : (
             <>
-              Already have an account?{' '}
+              {t('login.haveAccount')}{' '}
               <button
                 type="button"
                 onClick={() => switchMode('login')}
                 className="font-medium text-[var(--color-accent)] hover:underline"
               >
-                Log in
+                {t('login.submitLogin')}
               </button>
             </>
           )}
