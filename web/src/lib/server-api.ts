@@ -1,6 +1,10 @@
 import { cookies } from 'next/headers'
 import { TOKEN_COOKIE } from '@/lib/auth'
-import type { DailyLogResponse, WeeklyReportResponse } from '@/lib/api'
+import type {
+  DailyLogResponse,
+  MonthlyReportResponse,
+  WeeklyReportResponse,
+} from '@/lib/api'
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
 
@@ -28,4 +32,8 @@ export function fetchDailyLogs(): Promise<DailyLogResponse[]> {
 
 export function fetchWeeklyReports(): Promise<WeeklyReportResponse[]> {
   return fetchJson<WeeklyReportResponse[]>('/api/weekly-reports', [])
+}
+
+export function fetchMonthlyReports(): Promise<MonthlyReportResponse[]> {
+  return fetchJson<MonthlyReportResponse[]>('/api/monthly-reports', [])
 }

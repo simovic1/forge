@@ -44,29 +44,39 @@ public class MonthlyReport {
     @Column(name = "period_end_date", nullable = false)
     private LocalDate periodEndDate;
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal weight;
+    @Column(name = "completed_at")
+    private OffsetDateTime completedAt;
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal waist;
+    // Body measurements
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal chest;
+    @Column(name = "measured_weight_kg", precision = 5, scale = 2)
+    private BigDecimal measuredWeightKg;
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal neck;
+    @Column(name = "waist_cm", precision = 5, scale = 2)
+    private BigDecimal waistCm;
 
-    @Column(name = "biceps_left", precision = 5, scale = 2)
-    private BigDecimal bicepsLeft;
+    @Column(name = "chest_cm", precision = 5, scale = 2)
+    private BigDecimal chestCm;
 
-    @Column(name = "biceps_right", precision = 5, scale = 2)
-    private BigDecimal bicepsRight;
+    @Column(name = "neck_cm", precision = 5, scale = 2)
+    private BigDecimal neckCm;
 
-    @Column(name = "thigh_left", precision = 5, scale = 2)
-    private BigDecimal thighLeft;
+    @Column(name = "hips_cm", precision = 5, scale = 2)
+    private BigDecimal hipsCm;
 
-    @Column(name = "thigh_right", precision = 5, scale = 2)
-    private BigDecimal thighRight;
+    @Column(name = "biceps_left_cm", precision = 5, scale = 2)
+    private BigDecimal bicepsLeftCm;
+
+    @Column(name = "biceps_right_cm", precision = 5, scale = 2)
+    private BigDecimal bicepsRightCm;
+
+    @Column(name = "thigh_left_cm", precision = 5, scale = 2)
+    private BigDecimal thighLeftCm;
+
+    @Column(name = "thigh_right_cm", precision = 5, scale = 2)
+    private BigDecimal thighRightCm;
+
+    // Mental state
 
     @Column(name = "confidence_level")
     private Short confidenceLevel;
@@ -76,6 +86,32 @@ public class MonthlyReport {
 
     @Column(name = "food_control_level")
     private Short foodControlLevel;
+
+    @Column(name = "energy_level")
+    private Short energyLevel;
+
+    @Column(name = "stress_level")
+    private Short stressLevel;
+
+    @Column(name = "craving_control_level")
+    private Short cravingControlLevel;
+
+    // Reflection
+
+    @Column(name = "what_improved", columnDefinition = "text")
+    private String whatImproved;
+
+    @Column(name = "biggest_obstacle", columnDefinition = "text")
+    private String biggestObstacle;
+
+    @Column(name = "proudest_moment", columnDefinition = "text")
+    private String proudestMoment;
+
+    @Column(name = "noticed_pattern", columnDefinition = "text")
+    private String noticedPattern;
+
+    @Column(name = "next_month_focus", columnDefinition = "text")
+    private String nextMonthFocus;
 
     @Column(columnDefinition = "text")
     private String notes;

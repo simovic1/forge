@@ -62,11 +62,31 @@ function lastNDays(logs: DailyLogResponse[], n: number): DailyLogResponse[] {
   return logs.filter((l) => l.logDate >= cutoff)
 }
 
-// Weekly average weight over the last 12 weeks, oldest -> newest for the chart.
+// With fewer than 4 weeks of recorded weight, plot individual daily weights
+// from the last 4 weeks; with 4 or more weeks, plot weekly average weight over
+// the last 12 weeks. Oldest -> newest for the chart.
 export function computeWeightTrend(
   logs: DailyLogResponse[],
   months: string[],
 ): WeightPoint[] {
+  const weeksWithWeight = new Set<string>()
+  for (const log of logs) {
+    if (log.weight != null) weeksWithWeight.add(weekStartOf(log.logDate))
+  }
+
+  // Not enough weekly data yet → raw daily points from the last 4 weeks.
+  if (weeksWithWeight.size < 4) {
+    const cutoff = isoDaysAgo(27) // 4 weeks = 28 days, inclusive of today
+    return logs
+      .filter((l) => l.weight != null && l.logDate >= cutoff)
+      .sort((a, b) => a.logDate.localeCompare(b.logDate))
+      .map((l) => ({
+        date: formatDayLabel(l.logDate, months),
+        weight: l.weight as number,
+      }))
+  }
+
+  // Enough weekly data → weekly averages over the last 12 weeks.
   const cutoffWeek = weekStartOf(isoDaysAgo(7 * 11)) // start of the week 11 weeks ago
   const byWeek = new Map<string, number[]>()
   for (const log of logs) {

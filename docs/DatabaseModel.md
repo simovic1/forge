@@ -47,22 +47,46 @@ from daily_logs on read.
 
 ## monthly_reviews
 
+Unique on (user_id, period_start_date, period_end_date).
+
 - id
 - user_id
 - period_start_date
 - period_end_date
-- weight
-- waist
-- chest
-- neck
-- biceps_left
-- biceps_right
-- thigh_left
-- thigh_right
+- completed_at
+
+Body measurements:
+
+- measured_weight_kg
+- waist_cm
+- chest_cm
+- neck_cm
+- hips_cm
+- biceps_left_cm
+- biceps_right_cm
+- thigh_left_cm
+- thigh_right_cm
+
+Mental state:
+
 - confidence_level
 - self_satisfaction_level
 - food_control_level
+- energy_level
+- stress_level
+- craving_control_level
+
+Reflection:
+
+- what_improved
+- biggest_obstacle
+- proudest_moment
+- noticed_pattern
+- next_month_focus
 - notes
+
+Audit:
+
 - created_at
 - updated_at
 

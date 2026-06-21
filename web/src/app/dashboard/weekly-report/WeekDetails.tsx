@@ -11,6 +11,7 @@ import {
 } from '@/lib/api'
 import type { WeeklySummary } from '@/lib/weekly'
 import { useTranslations } from '@/i18n/client'
+import type { MessageKey } from '@/i18n/messages'
 
 const inputCls =
   'rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)] resize-y'
@@ -18,6 +19,25 @@ const inputCls =
 const DASH = '—'
 const cell = (v: number | null | undefined, suffix = '') =>
   v === null || v === undefined ? DASH : `${v}${suffix}`
+
+// Most frequent trigger this week (NONE / unset excluded).
+function topTrigger(logs: DailyLogResponse[]): string | null {
+  const counts = new Map<string, number>()
+  for (const log of logs) {
+    const type = log.triggerType
+    if (!type || type === 'NONE') continue
+    counts.set(type, (counts.get(type) ?? 0) + 1)
+  }
+  let best: string | null = null
+  let bestN = 0
+  for (const [type, n] of counts) {
+    if (n > bestN) {
+      best = type
+      bestN = n
+    }
+  }
+  return best
+}
 
 export default function WeekDetails({
   week,
@@ -106,6 +126,29 @@ export default function WeekDetails({
               >
                 {t('common.close')}
               </button>
+            </div>
+
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <MiniStat
+                label={t('monthly.avgCraving')}
+                value={week.avgCraving != null ? String(week.avgCraving) : DASH}
+              />
+              <MiniStat
+                label={t('monthly.cravingsResisted')}
+                value={`${week.cravingsResisted} / ${week.cravingEvents}`}
+              />
+              <MiniStat
+                label={t('monthly.resistanceRate')}
+                value={`${week.cravingEvents ? Math.round((week.cravingsResisted / week.cravingEvents) * 100) : 0}%`}
+              />
+              <MiniStat
+                label={t('weekly.topTrigger')}
+                value={
+                  topTrigger(logs)
+                    ? t(`trigger.${topTrigger(logs)}` as MessageKey)
+                    : DASH
+                }
+              />
             </div>
 
             <form onSubmit={handleSave}>
@@ -255,6 +298,17 @@ function Field({
     <div className="flex flex-col gap-1.5">
       <label className="text-sm font-medium">{label}</label>
       {children}
+    </div>
+  )
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] p-3">
+      <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
+        {label}
+      </p>
+      <p className="mt-0.5 text-base font-semibold">{value}</p>
     </div>
   )
 }

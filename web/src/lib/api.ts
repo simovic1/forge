@@ -189,3 +189,82 @@ export async function updateWeeklyReport(
 
   return res.json()
 }
+
+// A monthly report spans 4 weeks; the backend derives periodEndDate from the
+// start. All measurements/scores/reflection are optional. Scores are 1-10.
+export type CreateMonthlyReportRequest = {
+  periodStartDate: string
+  measuredWeightKg?: number
+  waistCm?: number
+  chestCm?: number
+  neckCm?: number
+  hipsCm?: number
+  bicepsLeftCm?: number
+  bicepsRightCm?: number
+  thighLeftCm?: number
+  thighRightCm?: number
+  confidenceLevel?: number
+  selfSatisfactionLevel?: number
+  foodControlLevel?: number
+  energyLevel?: number
+  stressLevel?: number
+  cravingControlLevel?: number
+  whatImproved?: string
+  biggestObstacle?: string
+  proudestMoment?: string
+  noticedPattern?: string
+  nextMonthFocus?: string
+  notes?: string
+}
+
+export type MonthlyReportResponse = CreateMonthlyReportRequest & {
+  id: number
+  userId: number
+  periodEndDate: string
+  completedAt?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export async function createMonthlyReport(
+  body: CreateMonthlyReportRequest,
+): Promise<MonthlyReportResponse> {
+  const res = await fetch('/api/monthly-reports', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await parseError(res))
+  }
+
+  return res.json()
+}
+
+export async function getMonthlyReports(): Promise<MonthlyReportResponse[]> {
+  const res = await fetch('/api/monthly-reports')
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await parseError(res))
+  }
+
+  return res.json()
+}
+
+export async function updateMonthlyReport(
+  id: number,
+  body: CreateMonthlyReportRequest,
+): Promise<MonthlyReportResponse> {
+  const res = await fetch(`/api/monthly-reports/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await parseError(res))
+  }
+
+  return res.json()
+}
