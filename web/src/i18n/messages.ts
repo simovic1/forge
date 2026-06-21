@@ -15,7 +15,7 @@ const en = {
 
   'language.aria': 'Language',
 
-  'nav.home': 'Home',
+  'nav.home': 'Dashboard',
   'nav.dailyLog': 'Daily log',
   'nav.weeklyReview': 'Weekly report',
   'nav.monthlyReview': 'Monthly report',

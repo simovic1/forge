@@ -49,12 +49,7 @@ export default async function WeeklyReportPage() {
                     key={w.weekStart}
                     className="border-b border-[var(--color-border)] last:border-0"
                   >
-                    <td className="whitespace-nowrap p-3">
-                      <span className="font-medium">{w.index}</span>
-                      <span className="ml-2 text-xs text-[var(--color-muted)]">
-                        {w.label}
-                      </span>
-                    </td>
+                    <td className="whitespace-nowrap p-3 font-medium">{w.index}</td>
                     <td className="p-3">{num(w.avgWeight, ' kg')}</td>
                     <td className="p-3">{signedNum(w.change, ' kg')}</td>
                     <td className="p-3">{num(w.avgSleep, ' h')}</td>

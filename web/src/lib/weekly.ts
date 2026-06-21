@@ -95,10 +95,9 @@ export function computeWeeklySummaries(
     }
   }
 
-  // Newest week first for display; index counts from the earliest week (= 1).
+  // Oldest week first; index counts from the earliest week (= 1).
   const sorted = [...byWeek.values()].sort((a, b) =>
-    b.weekStart.localeCompare(a.weekStart),
+    a.weekStart.localeCompare(b.weekStart),
   )
-  const total = sorted.length
-  return sorted.map((summary, i) => ({ ...summary, index: total - i }))
+  return sorted.map((summary, i) => ({ ...summary, index: i + 1 }))
 }
