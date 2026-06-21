@@ -38,8 +38,10 @@ export default async function WeeklyReportPage() {
                   <th className="p-3 font-medium">{t('weekly.col.avgSteps')}</th>
                   <th className="p-3 font-medium">{t('weekly.col.trainings')}</th>
                   <th className="p-3 font-medium">{t('weekly.col.daysNoOvereating')}</th>
+                  <th className="p-3 font-medium">{t('weekly.col.cravingsResisted')}</th>
                   <th className="p-3 font-medium">{t('weekly.col.avgEnergy')}</th>
                   <th className="p-3 font-medium">{t('weekly.col.avgStress')}</th>
+                  <th className="p-3 font-medium">{t('weekly.col.avgCraving')}</th>
                   <th className="p-3 font-medium">{t('weekly.col.details')}</th>
                 </tr>
               </thead>
@@ -58,8 +60,10 @@ export default async function WeeklyReportPage() {
                     </td>
                     <td className="p-3">{w.trainingsDone}</td>
                     <td className="p-3">{w.daysWithoutOvereating}</td>
+                    <td className="p-3">{w.cravingsResisted}</td>
                     <td className="p-3">{num(w.avgEnergy)}</td>
                     <td className="p-3">{num(w.avgStress)}</td>
+                    <td className="p-3">{num(w.avgCraving)}</td>
                     <td className="p-3">
                       <WeekDetails
                         week={w}

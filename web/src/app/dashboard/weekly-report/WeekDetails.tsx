@@ -194,6 +194,9 @@ export default function WeekDetails({
                         <th className="p-2 font-medium">{t('dailyLog.energy')}</th>
                         <th className="p-2 font-medium">{t('dailyLog.stress')}</th>
                         <th className="p-2 font-medium">{t('dailyLog.mood')}</th>
+                        <th className="p-2 font-medium">{t('dailyLog.craving')}</th>
+                        <th className="p-2 font-medium">{t('dailyLog.cravedFood')}</th>
+                        <th className="p-2 font-medium">{t('dailyLog.resistedCraving')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -218,6 +221,15 @@ export default function WeekDetails({
                           <td className="p-2">{cell(log.energyLevel)}</td>
                           <td className="p-2">{cell(log.stressLevel)}</td>
                           <td className="p-2">{cell(log.moodLevel)}</td>
+                          <td className="p-2">{cell(log.cravingLevel)}</td>
+                          <td className="p-2">{log.cravedFood || DASH}</td>
+                          <td className="p-2">
+                            {log.resistedCraving === true
+                              ? '✓'
+                              : log.resistedCraving === false
+                                ? '✗'
+                                : DASH}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

@@ -11,6 +11,8 @@ export type WeeklySummary = {
   avgSteps: number | null
   trainingsDone: number
   daysWithoutOvereating: number
+  cravingsResisted: number
+  avgCraving: number | null
   avgEnergy: number | null
   avgStress: number | null
 }
@@ -81,6 +83,8 @@ export function computeWeeklySummaries(
       avgSteps: average(weekLogs.map((l) => l.steps)),
       trainingsDone: weekLogs.filter((l) => l.trainingCompleted === true).length,
       daysWithoutOvereating: weekLogs.filter((l) => l.overeating === false).length,
+      cravingsResisted: weekLogs.filter((l) => l.resistedCraving === true).length,
+      avgCraving: average(weekLogs.map((l) => l.cravingLevel)),
       avgEnergy: average(weekLogs.map((l) => l.energyLevel)),
       avgStress: average(weekLogs.map((l) => l.stressLevel)),
     })
