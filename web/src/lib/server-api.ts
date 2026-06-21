@@ -6,7 +6,7 @@ import type {
   WeeklyReportResponse,
 } from '@/lib/api'
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
+import { BACKEND_URL } from '@/lib/backend'
 
 async function fetchJson<T>(path: string, fallback: T): Promise<T> {
   const token = (await cookies()).get(TOKEN_COOKIE)?.value

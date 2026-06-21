@@ -1,3 +1,8 @@
+# Listen on the platform-provided port when present (e.g. Render sets PORT),
+# otherwise 8080 for local/Docker.
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: forge

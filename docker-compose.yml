@@ -1,0 +1,52 @@
+# Full stack for same-Wi-Fi use: `docker compose up --build` then open
+# http://<your-PC-IP>:3000 on your phone (allow port 3000 in the firewall).
+#
+# The phone only talks to the `web` service; `backend` and `db` stay internal.
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-forge}
+      POSTGRES_USER: ${POSTGRES_USER:-forge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forge}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-forge} -d ${POSTGRES_DB:-forge}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-forge}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-forge}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-forge}
+      # Override with a long random value for anything beyond a trusted LAN.
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-please-32b!}
+    expose:
+      - "8080"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    environment:
+      # Reach the backend over the compose network (not localhost).
+      BACKEND_URL: http://backend:8080
+      # LAN is plain http, so the auth cookie must not be Secure-only.
+      AUTH_COOKIE_SECURE: "false"
+    ports:
+      - "3000:3000"
+
+volumes:
+  db-data:

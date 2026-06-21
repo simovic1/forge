@@ -76,7 +76,14 @@ Daily logs are the source of truth. Weekly and monthly reviews are calculated fr
 
 ## Local Development
 
-Comming soon.
+Run the whole stack with Docker from the repo root:
+
+```bash
+docker compose up --build      # web on :3000, backend on :8080, Postgres
+```
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for same-Wi-Fi (phone) and Vercel
+deployment instructions.
 
 ## Roadmap
 

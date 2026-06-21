@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 // Proxies registration to the FORGE backend (POST /api/users) so the browser
 // can call a same-origin endpoint (avoids CORS). The backend persists the user
 // and returns 201 with the created user, or 409 if the email is already used.
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
+import { BACKEND_URL } from '@/lib/backend'
 
 export async function POST(request: Request) {
   const body = await request.text()

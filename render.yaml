@@ -1,0 +1,55 @@
+# Render blueprint: deploys the whole FORGE stack (managed Postgres + backend +
+# web) with automatic HTTPS. In Render: New → Blueprint → pick this repo.
+#
+# The web service is the only public-facing UI; it proxies /api/* to the backend
+# over Render's network, so there is no CORS to configure.
+
+databases:
+  - name: forge-db
+    plan: free
+    databaseName: forge
+    user: forge
+
+services:
+  # --- Spring backend (Docker) ---
+  - type: web
+    name: forge-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /actuator/health
+    envVars:
+      # Spring builds the JDBC URL from these (it resolves the ${...} nested
+      # placeholders at startup).
+      - key: DB_HOST
+        fromDatabase: { name: forge-db, property: host }
+      - key: DB_PORT
+        fromDatabase: { name: forge-db, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: forge-db, property: database }
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase: { name: forge-db, property: user }
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase: { name: forge-db, property: password }
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+      # Strong JWT signing secret, generated once by Render.
+      - key: JWT_SECRET
+        generateValue: true
+
+  # --- Next.js web app (Docker) ---
+  - type: web
+    name: forge-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./web/Dockerfile
+    dockerContext: ./web
+    envVars:
+      # Render injects the backend's host (no scheme); lib/backend.ts upgrades it
+      # to https://.
+      - key: BACKEND_URL
+        fromService: { name: forge-backend, type: web, property: host }
+      # Served over HTTPS → keep the auth cookie Secure.
+      - key: AUTH_COOKIE_SECURE
+        value: "true"

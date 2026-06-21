@@ -4,7 +4,7 @@ import { getRequestToken } from '@/lib/route-auth'
 // Auth proxies must run per request; never prerender them.
 export const dynamic = 'force-dynamic'
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
+import { BACKEND_URL } from '@/lib/backend'
 
 export async function PUT(
   request: Request,

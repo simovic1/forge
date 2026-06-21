@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { TOKEN_COOKIE } from '@/lib/auth'
+import { TOKEN_COOKIE, authCookieSecure } from '@/lib/auth'
 
 // Proxies the login request to the FORGE backend so the browser can call a
 // same-origin endpoint (avoids CORS). Configure the backend with BACKEND_URL.
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
+import { BACKEND_URL } from '@/lib/backend'
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       value: data.accessToken,
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: authCookieSecure(),
       path: '/',
       maxAge: data.expiresIn ?? 60 * 60,
     })
