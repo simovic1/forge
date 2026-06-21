@@ -10,8 +10,8 @@ import LanguageSwitcher from './LanguageSwitcher'
 const items: { href: string; labelKey: MessageKey }[] = [
   { href: '/dashboard', labelKey: 'nav.home' },
   { href: '/dashboard/daily-log', labelKey: 'nav.dailyLog' },
-  { href: '/dashboard/weekly-review', labelKey: 'nav.weeklyReview' },
-  { href: '/dashboard/monthly-review', labelKey: 'nav.monthlyReview' },
+  { href: '/dashboard/weekly-report', labelKey: 'nav.weeklyReview' },
+  { href: '/dashboard/monthly-report', labelKey: 'nav.monthlyReview' },
 ]
 
 export default function DashboardNav() {

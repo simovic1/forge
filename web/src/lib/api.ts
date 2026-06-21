@@ -65,7 +65,7 @@ export async function register(body: RegisterRequest): Promise<void> {
 }
 
 // Only logDate is required; every metric is optional.
-// energyLevel/stressLevel/moodLevel use a 1-5 scale (1 = low, 5 = high).
+// energyLevel/stressLevel/moodLevel and cravingLevel use a 1-10 scale (1 = low, 10 = high).
 export type CreateDailyLogRequest = {
   logDate: string
   weight?: number
@@ -78,6 +78,9 @@ export type CreateDailyLogRequest = {
   overeating?: boolean
   triggerType?: string
   resistedTrigger?: boolean
+  cravingLevel?: number
+  cravedFood?: string
+  resistedCraving?: boolean
   energyLevel?: number
   stressLevel?: number
   moodLevel?: number
@@ -124,6 +127,57 @@ export async function updateDailyLog(
   body: CreateDailyLogRequest,
 ): Promise<DailyLogResponse> {
   const res = await fetch(`/api/daily-logs/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await parseError(res))
+  }
+
+  return res.json()
+}
+
+// weekStartDate is any date in the target week; the backend snaps it to Monday.
+export type CreateWeeklyReportRequest = {
+  weekStartDate: string
+  whatWentWell?: string
+  biggestChallenge?: string
+  mainTriggerNote?: string
+  nextWeekFocus?: string
+  notes?: string
+}
+
+export type WeeklyReportResponse = CreateWeeklyReportRequest & {
+  id: number
+  userId: number
+  weekEndDate: string
+  createdAt: string
+  updatedAt: string
+}
+
+export async function createWeeklyReport(
+  body: CreateWeeklyReportRequest,
+): Promise<WeeklyReportResponse> {
+  const res = await fetch('/api/weekly-reports', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await parseError(res))
+  }
+
+  return res.json()
+}
+
+export async function updateWeeklyReport(
+  id: number,
+  body: CreateWeeklyReportRequest,
+): Promise<WeeklyReportResponse> {
+  const res = await fetch(`/api/weekly-reports/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

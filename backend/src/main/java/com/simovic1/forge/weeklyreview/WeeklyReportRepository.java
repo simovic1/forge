@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface WeeklyReviewRepository extends JpaRepository<WeeklyReview, Long> {
+interface WeeklyReportRepository extends JpaRepository<WeeklyReport, Long> {
 
-    List<WeeklyReview> findByUserId(Long userId);
+    List<WeeklyReport> findByUserId(Long userId);
 
-    Optional<WeeklyReview> findByUserIdAndWeekStartDate(Long userId, LocalDate weekStartDate);
+    Optional<WeeklyReport> findByUserIdAndWeekStartDate(Long userId, LocalDate weekStartDate);
 
     boolean existsByUserIdAndWeekStartDate(Long userId, LocalDate weekStartDate);
 }

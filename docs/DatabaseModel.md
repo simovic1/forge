@@ -30,23 +30,18 @@
 
 ## weekly_reviews
 
+Only the user's written reflection is stored; all numeric metrics are derived
+from daily_logs on read.
+
 - id
 - user_id
 - week_start_date
 - week_end_date
-- avg_weight
-- weight_change
-- avg_sleep_hours
-- avg_steps
-- training_cnt
-- days_without_overeating
-- avg_energy_level
-- avg_stress_level
-- avg_mood_level
-- avg_calories
 - what_went_well
-- biggest_problem
+- biggest_challenge
+- main_trigger_note
 - next_week_focus
+- notes
 - created_at
 - updated_at
 

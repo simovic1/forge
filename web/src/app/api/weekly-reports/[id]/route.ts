@@ -20,7 +20,7 @@ export async function PUT(
 
   let res: Response
   try {
-    res = await fetch(`${BACKEND_URL}/api/daily-logs/${id}`, {
+    res = await fetch(`${BACKEND_URL}/api/weekly-reports/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WeeklyReview {
+public class WeeklyReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,44 +43,20 @@ public class WeeklyReview {
     @Column(name = "week_end_date", nullable = false)
     private LocalDate weekEndDate;
 
-    @Column(name = "avg_weight", precision = 5, scale = 2)
-    private BigDecimal avgWeight;
-
-    @Column(name = "weight_change", precision = 5, scale = 2)
-    private BigDecimal weightChange;
-
-    @Column(name = "avg_sleep_hours", precision = 4, scale = 2)
-    private BigDecimal avgSleepHours;
-
-    @Column(name = "avg_steps")
-    private Integer avgSteps;
-
-    @Column(name = "training_cnt")
-    private Short trainingCnt;
-
-    @Column(name = "days_without_overeating")
-    private Short daysWithoutOvereating;
-
-    @Column(name = "avg_energy_level", precision = 3, scale = 1)
-    private BigDecimal avgEnergyLevel;
-
-    @Column(name = "avg_stress_level", precision = 3, scale = 1)
-    private BigDecimal avgStressLevel;
-
-    @Column(name = "avg_mood_level", precision = 3, scale = 1)
-    private BigDecimal avgMoodLevel;
-
-    @Column(name = "avg_calories")
-    private Integer avgCalories;
-
     @Column(name = "what_went_well", columnDefinition = "text")
     private String whatWentWell;
 
-    @Column(name = "biggest_problem", columnDefinition = "text")
-    private String biggestProblem;
+    @Column(name = "biggest_challenge", columnDefinition = "text")
+    private String biggestChallenge;
+
+    @Column(name = "main_trigger_note", columnDefinition = "text")
+    private String mainTriggerNote;
 
     @Column(name = "next_week_focus", columnDefinition = "text")
     private String nextWeekFocus;
+
+    @Column(name = "notes", columnDefinition = "text")
+    private String notes;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

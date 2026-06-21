@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface MonthlyReviewRepository extends JpaRepository<MonthlyReview, Long> {
+interface MonthlyReportRepository extends JpaRepository<MonthlyReport, Long> {
 
-    List<MonthlyReview> findByUserId(Long userId);
+    List<MonthlyReport> findByUserId(Long userId);
 
-    Optional<MonthlyReview> findByUserIdAndPeriodStartDate(Long userId, LocalDate periodStartDate);
+    Optional<MonthlyReport> findByUserIdAndPeriodStartDate(Long userId, LocalDate periodStartDate);
 
     boolean existsByUserIdAndPeriodStartDate(Long userId, LocalDate periodStartDate);
 }

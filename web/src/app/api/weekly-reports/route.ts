@@ -6,22 +6,43 @@ export const dynamic = 'force-dynamic'
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET() {
   const token = await getRequestToken()
   if (!token) {
     return NextResponse.json({ message: 'Not authenticated.' }, { status: 401 })
   }
 
-  const { id } = await params
+  let res: Response
+  try {
+    res = await fetch(`${BACKEND_URL}/api/weekly-reports`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  } catch {
+    return NextResponse.json(
+      { message: 'Unable to reach the server.' },
+      { status: 502 },
+    )
+  }
+
+  const payload = await res.text()
+  return new NextResponse(payload, {
+    status: res.status,
+    headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/json' },
+  })
+}
+
+export async function POST(request: Request) {
+  const token = await getRequestToken()
+  if (!token) {
+    return NextResponse.json({ message: 'Not authenticated.' }, { status: 401 })
+  }
+
   const body = await request.text()
 
   let res: Response
   try {
-    res = await fetch(`${BACKEND_URL}/api/daily-logs/${id}`, {
-      method: 'PUT',
+    res = await fetch(`${BACKEND_URL}/api/weekly-reports`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

@@ -1,35 +1,21 @@
-import { cookies } from 'next/headers'
 import WeightChart from '@/app/components/WeightChart'
-import type { DailyLogResponse } from '@/lib/api'
-import { TOKEN_COOKIE } from '@/lib/auth'
 import { computeDashboardStats, computeWeightTrend } from '@/lib/dashboard'
+import { fetchDailyLogs } from '@/lib/server-api'
 import { monthsShort } from '@/i18n/messages'
 import { getLocale, getT } from '@/i18n/server'
-
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
-
-async function fetchLogs(): Promise<DailyLogResponse[]> {
-  const token = (await cookies()).get(TOKEN_COOKIE)?.value
-  if (!token) return []
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/daily-logs`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: 'no-store',
-    })
-    if (!res.ok) return []
-    return res.json()
-  } catch {
-    return []
-  }
-}
 
 export default async function DashboardPage() {
   const t = await getT()
   const locale = await getLocale()
-  const logs = await fetchLogs()
-  const stats = computeDashboardStats(logs)
+  const logs = await fetchDailyLogs()
+  const { cards, wellbeing } = computeDashboardStats(logs)
   const weightTrend = computeWeightTrend(logs, monthsShort[locale])
+
+  const wellbeingItems = [
+    { labelKey: 'stats.avgEnergy' as const, value: wellbeing.energy },
+    { labelKey: 'stats.avgStress' as const, value: wellbeing.stress },
+    { labelKey: 'stats.avgMood' as const, value: wellbeing.mood },
+  ]
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
@@ -38,8 +24,8 @@ export default async function DashboardPage() {
         <p className="mt-2 text-[var(--color-muted)]">{t('dashboard.subtitle')}</p>
       </header>
 
-      <section className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {stats.map((stat) => (
+      <section className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {cards.map((stat) => (
           <div
             key={stat.labelKey}
             className="rounded-xl border border-[var(--color-border)] p-4"
@@ -71,6 +57,19 @@ export default async function DashboardPage() {
             {t('dashboard.noWeight')}
           </p>
         )}
+
+        <div className="mt-6 grid grid-cols-3 gap-4 border-t border-[var(--color-border)] pt-4">
+          {wellbeingItems.map((item) => (
+            <div key={item.labelKey}>
+              <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
+                {t(item.labelKey)}
+              </p>
+              <p className="mt-1 text-lg font-semibold">
+                {item.value != null ? item.value.toFixed(1) : '—'}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
     </main>
   )

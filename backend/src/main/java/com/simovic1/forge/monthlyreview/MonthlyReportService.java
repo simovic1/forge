@@ -8,32 +8,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MonthlyReviewService {
+public class MonthlyReportService {
 
-    private final MonthlyReviewRepository monthlyReviewRepository;
+    private final MonthlyReportRepository monthlyReviewRepository;
 
     @Transactional(readOnly = true)
-    public MonthlyReview getById(Long id) {
+    public MonthlyReport getById(Long id) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Transactional(readOnly = true)
-    public List<MonthlyReview> getByUser(Long userId) {
+    public List<MonthlyReport> getByUser(Long userId) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Transactional(readOnly = true)
-    public MonthlyReview getByUserAndPeriodStart(Long userId, LocalDate periodStartDate) {
+    public MonthlyReport getByUserAndPeriodStart(Long userId, LocalDate periodStartDate) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Transactional
-    public MonthlyReview create(MonthlyReview monthlyReview) {
+    public MonthlyReport create(MonthlyReport monthlyReview) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Transactional
-    public MonthlyReview update(Long id, MonthlyReview monthlyReview) {
+    public MonthlyReport update(Long id, MonthlyReport monthlyReview) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

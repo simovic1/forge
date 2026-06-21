@@ -28,7 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MonthlyReview {
+public class MonthlyReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

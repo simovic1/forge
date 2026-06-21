@@ -1,9 +1,18 @@
 import type { DailyLogResponse } from '@/lib/api'
 import type { WeightPoint } from '@/app/components/WeightChart'
 import type { MessageKey } from '@/i18n/messages'
+import { weekStartOf } from '@/lib/weekly'
 
 // `labelKey` is a translation key; the page resolves it to the user's language.
 export type Stat = { labelKey: MessageKey; value: string; sub?: string }
+
+export type Wellbeing = {
+  energy: number | null
+  stress: number | null
+  mood: number | null
+}
+
+export type DashboardData = { cards: Stat[]; wellbeing: Wellbeing }
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 
@@ -45,7 +54,7 @@ function average(values: (number | null | undefined)[], count: number): number |
   return round1(present.reduce((sum, v) => sum + v, 0) / count)
 }
 
-export function computeDashboardStats(logs: DailyLogResponse[]): Stat[] {
+export function computeDashboardStats(logs: DailyLogResponse[]): DashboardData {
   // Newest first by log date.
   const byDateDesc = [...logs].sort((a, b) => b.logDate.localeCompare(a.logDate))
   const withWeight = byDateDesc.filter((l) => l.weight != null)
@@ -71,12 +80,27 @@ export function computeDashboardStats(logs: DailyLogResponse[]): Stat[] {
     }
   }
 
+  // Current-week (Monday–Sunday containing today) counts.
+  const currentWeekStart = weekStartOf(isoDaysAgo(0))
+  const currentWeekLogs = logs.filter((l) => weekStartOf(l.logDate) === currentWeekStart)
+  const daysWithoutOvereating = currentWeekLogs.filter(
+    (l) => l.overeating === false,
+  ).length
+  const trainingsDone = currentWeekLogs.filter(
+    (l) => l.trainingCompleted === true,
+  ).length
+
   // Averages over the last (up to) 7 logs.
   const last7 = byDateDesc.slice(0, 7)
-  const avgSleep = average(last7.map((l) => l.sleepingHours), last7.length)
   const avgSteps = average(last7.map((l) => l.steps), last7.length)
 
-  return [
+  const wellbeing: Wellbeing = {
+    energy: average(last7.map((l) => l.energyLevel), last7.length),
+    stress: average(last7.map((l) => l.stressLevel), last7.length),
+    mood: average(last7.map((l) => l.moodLevel), last7.length),
+  }
+
+  const cards: Stat[] = [
     {
       labelKey: 'stats.currentWeight',
       value: newestWeight != null ? `${newestWeight} kg` : '—',
@@ -87,12 +111,18 @@ export function computeDashboardStats(logs: DailyLogResponse[]): Stat[] {
       sub: changeSub,
     },
     {
-      labelKey: 'stats.avgSleep',
-      value: avgSleep != null ? `${avgSleep.toFixed(1)} h` : '—',
+      labelKey: 'stats.daysNoOvereating',
+      value: `${daysWithoutOvereating} / 7`,
     },
     {
       labelKey: 'stats.avgSteps',
       value: avgSteps != null ? avgSteps.toFixed(1) : '—',
     },
+    {
+      labelKey: 'stats.trainingsDone',
+      value: `${trainingsDone} / 7`,
+    },
   ]
+
+  return { cards, wellbeing }
 }

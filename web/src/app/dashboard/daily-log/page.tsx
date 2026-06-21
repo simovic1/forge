@@ -12,6 +12,18 @@ import {
   type DailyLogResponse,
 } from '@/lib/api'
 import { useTranslations } from '@/i18n/client'
+import type { MessageKey } from '@/i18n/messages'
+
+const TRIGGERS = [
+  'HUNGER',
+  'STRESS',
+  'BOREDOM',
+  'SOCIAL',
+  'FATIGUE',
+  'CHAOS',
+  'AVAILABILITY',
+  'NONE',
+] as const
 
 type FormState = {
   logDate: string
@@ -25,6 +37,9 @@ type FormState = {
   overeating: boolean
   triggerType: string
   resistedTrigger: boolean
+  cravingLevel: string
+  cravedFood: string
+  resistedCraving: boolean
   energyLevel: string
   stressLevel: string
   moodLevel: string
@@ -43,6 +58,9 @@ const EMPTY: FormState = {
   overeating: false,
   triggerType: '',
   resistedTrigger: false,
+  cravingLevel: '',
+  cravedFood: '',
+  resistedCraving: false,
   energyLevel: '',
   stressLevel: '',
   moodLevel: '',
@@ -80,6 +98,9 @@ function presetFrom(log: DailyLogResponse): FormState {
     overeating: log.overeating ?? false,
     triggerType: log.triggerType ?? '',
     resistedTrigger: log.resistedTrigger ?? false,
+    cravingLevel: s(log.cravingLevel),
+    cravedFood: log.cravedFood ?? '',
+    resistedCraving: log.resistedCraving ?? false,
     energyLevel: s(log.energyLevel),
     stressLevel: s(log.stressLevel),
     moodLevel: s(log.moodLevel),
@@ -150,6 +171,9 @@ export default function DailyLogPage() {
       overeating: form.overeating,
       triggerType: form.triggerType.trim() || undefined,
       resistedTrigger: form.resistedTrigger,
+      cravingLevel: toNumber(form.cravingLevel),
+      cravedFood: form.cravedFood.trim() || undefined,
+      resistedCraving: form.resistedCraving,
       energyLevel: toNumber(form.energyLevel),
       stressLevel: toNumber(form.stressLevel),
       moodLevel: toNumber(form.moodLevel),
@@ -303,15 +327,19 @@ export default function DailyLogPage() {
             />
           </Field>
           <Field label={t('dailyLog.trigger')} htmlFor="triggerType">
-            <input
+            <select
               id="triggerType"
-              type="text"
-              maxLength={100}
-              placeholder={t('dailyLog.triggerPlaceholder')}
               value={form.triggerType}
               onChange={(e) => set('triggerType', e.target.value)}
               className={inputCls}
-            />
+            >
+              <option value="">—</option>
+              {TRIGGERS.map((value) => (
+                <option key={value} value={value}>
+                  {t(`trigger.${value}` as MessageKey)}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label={t('dailyLog.resistedTrigger')} htmlFor="resistedTrigger">
             <Checkbox
@@ -319,6 +347,31 @@ export default function DailyLogPage() {
               checked={form.resistedTrigger}
               onChange={(v) => set('resistedTrigger', v)}
               text={t('dailyLog.resistedCheck')}
+            />
+          </Field>
+          <Field label={t('dailyLog.craving')} htmlFor="cravingLevel">
+            <LevelSelect
+              id="cravingLevel"
+              value={form.cravingLevel}
+              onChange={(v) => set('cravingLevel', v)}
+            />
+          </Field>
+          <Field label={t('dailyLog.cravedFood')} htmlFor="cravedFood">
+            <input
+              id="cravedFood"
+              type="text"
+              placeholder={t('dailyLog.cravedFoodPlaceholder')}
+              value={form.cravedFood}
+              onChange={(e) => set('cravedFood', e.target.value)}
+              className={inputCls}
+            />
+          </Field>
+          <Field label={t('dailyLog.resistedCraving')} htmlFor="resistedCraving">
+            <Checkbox
+              id="resistedCraving"
+              checked={form.resistedCraving}
+              onChange={(v) => set('resistedCraving', v)}
+              text={t('dailyLog.resistedCravingCheck')}
             />
           </Field>
         </Section>
@@ -480,7 +533,7 @@ function LevelSelect({
       className={inputCls}
     >
       <option value="">—</option>
-      {[1, 2, 3, 4, 5].map((n) => (
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
         <option key={n} value={n}>
           {n}
         </option>

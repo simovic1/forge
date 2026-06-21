@@ -1,21 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { TOKEN_COOKIE } from '@/lib/auth'
+import { NextResponse } from 'next/server'
+import { getRequestToken } from '@/lib/route-auth'
 
-// Proxies daily-log creation to the FORGE backend. The backend requires a
-// Bearer token; we read it from the httpOnly auth cookie (which the browser
-// can't access) and attach it server-side.
+// Proxies daily-log requests to the FORGE backend, attaching the auth token
+// (from the httpOnly cookie) as a Bearer header server-side.
+// Auth proxies must run per request; never prerender them.
+export const dynamic = 'force-dynamic'
+
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080'
 
-export async function GET(request: NextRequest) {
-  const token = request.cookies.get(TOKEN_COOKIE)?.value
+export async function GET(request: Request) {
+  const token = await getRequestToken()
   if (!token) {
     return NextResponse.json({ message: 'Not authenticated.' }, { status: 401 })
   }
 
   // Forward the query string (e.g. ?from=&to=) to the backend.
+  const { search } = new URL(request.url)
+
   let res: Response
   try {
-    res = await fetch(`${BACKEND_URL}/api/daily-logs${request.nextUrl.search}`, {
+    res = await fetch(`${BACKEND_URL}/api/daily-logs${search}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
   } catch {
@@ -32,8 +36,8 @@ export async function GET(request: NextRequest) {
   })
 }
 
-export async function POST(request: NextRequest) {
-  const token = request.cookies.get(TOKEN_COOKIE)?.value
+export async function POST(request: Request) {
+  const token = await getRequestToken()
   if (!token) {
     return NextResponse.json({ message: 'Not authenticated.' }, { status: 401 })
   }

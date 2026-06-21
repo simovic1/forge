@@ -7,14 +7,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * Payload for creating a daily log. Only {@code logDate} is required; every
  * metric is optional so users can log as little or as much as they track.
- * Energy/stress/mood use a 1-5 scale (1 = low, 5 = high).
+ * Energy/stress/mood and craving use a 1-10 scale (1 = low, 10 = high).
  */
 public record CreateDailyLogRequest(
 
@@ -47,21 +46,28 @@ public record CreateDailyLogRequest(
 
         Boolean overeating,
 
-        @Size(max = 100)
-        String triggerType,
+        TriggerType triggerType,
 
         Boolean resistedTrigger,
 
         @Min(1)
-        @Max(5)
+        @Max(10)
+        Short cravingLevel,
+
+        String cravedFood,
+
+        Boolean resistedCraving,
+
+        @Min(1)
+        @Max(10)
         Short energyLevel,
 
         @Min(1)
-        @Max(5)
+        @Max(10)
         Short stressLevel,
 
         @Min(1)
-        @Max(5)
+        @Max(10)
         Short moodLevel,
 
         String notes
@@ -86,6 +92,9 @@ public record CreateDailyLogRequest(
         log.setOvereating(overeating);
         log.setTriggerType(triggerType);
         log.setResistedTrigger(resistedTrigger);
+        log.setCravingLevel(cravingLevel);
+        log.setCravedFood(cravedFood);
+        log.setResistedCraving(resistedCraving);
         log.setEnergyLevel(energyLevel);
         log.setStressLevel(stressLevel);
         log.setMoodLevel(moodLevel);
